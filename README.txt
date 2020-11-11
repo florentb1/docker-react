@@ -1,0 +1,78 @@
+Create react app
+npm create-react-app docker-react
+
+Ecriture de la file Dockerfile.dev
+
+Build project:
+docker build -f Dockerfile.dev .
+
+Suppression dossier node-modules
+Nous avons supprimé le dossier node-modules car docker importe déjà les node modules. C'est un duplicate.
+
+Faire commande: docker build -f Dockerfile.dev . après avoir supprimé le dossier node modules
+
+Démarer le container créé avec id de docker:
+How we start a container
+docker run -it -p 3000:3000 CONTAINER_ID
+docker run -it -p 3000:3000 1c6ce69348ec
+
+-- Docker volume --
+Put a reference in the docker container to our local machine to give us access to our local files in our machines
+
+Commande:
+docker run -it -p 3000:3000 -v /app/node_modules -v D:\wamp\www\tests\docker-react -e CHOKIDAR_USEPOLLING=true 24f8eaef175e
+Ne fonctionne pas pour la modification instantannée.
+Obliger de refaire les commandes:
+docker build -f Dockerfile.dev .
+docker run -it -p 3000:3000 -v /app/node_modules -v D:\wamp\www\tests\docker-react -e CHOKIDAR_USEPOLLING=true <container_id>
+
+React App Exited With Code 0:
+Add stdin_open property to your docker-compose.yml file
+  web:
+    stdin_open: true
+Make sure you rebuild your containers after making this change with  docker-compose down && docker-compose up --build
+
+
+-- Docker compose --
+Plutôt que d'utiliser les longues commandes au dessus
+nous rédigons un fichier docker-compose.yml ou nous précisions à Docker tout ce qu'il doit faire.
+Puis nous exécutons la commande suivante:
+docker-compose up
+
+
+-- Tests --
+docker build -f Dockerfile.dev .
+Container: 995da6800603
+
+Sans utiliser les tests options:
+docker run 995da6800603 npm run test
+To be able to use the tests options (recommandés):
+docker run -it 995da6800603 npm run test
+
+Synchronisation des tests:
+Premier choix 
+Premier terminal:
+docker build -f Dockerfile.dev .
+Container: 995da6800603
+docker-compose up
+
+Second terminal:
+docker exec -it 995da6800603 npm run test
+Les tests sont ainsi synchronisés avec l'existant.
+
+Deuxième solution: Ajouter un deuxième service dans docker-compose.yml
+Création du service tests
+
+Après avoir ajouter un second service:
+docker-compose up --build
+Maintenant les tests sont synchronisés avec l'existant. Si on ajoute un test alors les tests se réexécute immédiatement.
+Par contre les options ne fonctionnent pas.
+
+-- Utilisation de Nginx - Mise en production -- 
+Créer la file Dockerfile qu'on utilisera pour la production
+Exécuter la commande:
+docker build .
+Id: 6bc024b2e3d2
+
+Puis exécuter:
+docker run -p 8080:80 6bc024b2e3d2
