@@ -76,3 +76,5 @@ Id: 6bc024b2e3d2
 
 Puis exécuter:
 docker run -p 8080:80 6bc024b2e3d2
+
+docker run 1e09588c1845 npm run test -- --coverage
