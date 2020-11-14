@@ -77,4 +77,13 @@ Id: 6bc024b2e3d2
 Puis exécuter:
 docker run -p 8080:80 6bc024b2e3d2
 
-docker run 1e09588c1845 npm run test -- --coverage
+-- AWS --
+select Docker running on 64bit Amazon Linux
+
+ElasticBeanstalk
+The loadbalancer will splits the calls between virtual machines.
+The VM is running docker.
+The docker-container inside the VM is running our app.
+
+S3: Bucket service
+IAM: Manage access to AWS ressources
